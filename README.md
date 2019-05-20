@@ -338,7 +338,7 @@ When git is finished installing, you will see something like this:
 
 We will be using [GitHub Classroom](https://classroom.github.com/) for assignments. Working with GitHub classroom is very easy. When an assignment is created, we will share a GitHub link with you. We created a sample assignment, and the link is the following:
 
-[https://classroom.github.com/a/iljRQVAi](https://classroom.github.com/a/iljRQVAi)
+[https://classroom.github.com/a/6E8awdR_](https://classroom.github.com/a/6E8awdR_)
 
 When you click on this link, you will be asked to "accept" the invitation to this assignment. Please accept, and when you do so, GitHub will automatically create a private copy of this repository within your own GitHub account. Course instructors and TA's have access to your repository.
 
