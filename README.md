@@ -2,40 +2,101 @@
 
 This lab provides instructions for setting up your local environment to be able to work with cloud resources in this course. We will guide you step-by-step through the process of:
 
-* installing Babun (if you have a Windows machine)
-* creating you public/private ssh key pair amd knowing where these files exist
-* uploading your public ssh key to cloud services (AWS and GitHub)
-* setting up a Security Group on AWS that opens up port 22
-* learning to use ssh-agent
-* learning about terminal based text editors
-* starting an Amazon Virtual Machine (also referred to as instance, VM, EC2, remote server)
-* connecting to your VM
-* learning how to work with GitHub, GitHub Classroom and your virtual machines
-* performing some tasks on the VM in the sample assignment
+1. Creating you public/private ssh key pair amd knowing where these files exist
+1. Uploading your public ssh key to cloud services (AWS and GitHub)
+1. Setting up a Security Group on AWS that opens up port 22
+1. Learning to use ssh-agent
+1. Learning about terminal based text editors
+1. Starting an Amazon Virtual Machine (also referred to as instance, VM, EC2, remote server)
+1. Connecting to your VM
+1. Learning how to work with GitHub, GitHub Classroom and your virtual machines
+1. Performing some tasks on the VM in the sample assignment
+1. Creating a student account in Microsoft Azure
 
-# Setup
+**Notes:**
 
-## Create your Secure Shell keypair
+* You must read all the instructions carefully and follow then step by step. Do not jump around.
+* The screenshots may look slightly different than what you are seeing. Please read all instructions and follow then step by step. Do not jump around.**
+
+# Links to Sections
+
+* [WiFi](#wifi)
+* [Terminal Setup](#terminal-setup)
+* [SSH Keypair Setup](#ssh-keypair-setup)
+* [AWS Setup](#aws-setup)
+* [GitHub Setup](#github-setup)
+* [SSH Agent Setup](#ssh-agent-setup)
+* [GitHub Classroom Sample Assignment](#github-classroom-sample-assignment)
+* [Microsoft Azure Student Account Setup](#microsoft-azure-student-account-setup)
+
+
+# WiFi
+
+**Georgetown students must be connected to _Saxanet_ wifi when on-campus. Otherwise you will not be able to connect to your cloud resources.**
+
+
+# Terminal Setup
+
+We will be using the Terminal in almost every task in this course. By "Terminal", we mean a command-line terminal, where you will use it to type instructions and connect to your remote resources.
+
+When we say "terminal" in this course, it means that you need to open up the terminal application for your respective operating system. The terminal is a "local" application, meaning it is running on your "local" machine (your laptop.)
+
+## Windows Users
+
+Windows users will be using the [Windows Powershell](https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/powershell). Windows Powershell is most likely installed if you have Windows 10. If you don't have Powershell, take a look at [this article](https://www.howtogeek.com/336775/how-to-enable-and-use-windows-10s-built-in-ssh-commands/) that explains how to install it.
+
+You can find Powershell by typing "Powershell" into the search bar:
+
+<img src='images/powershell1.png'>
+
+Once Powershell is running, this is your terminal:
+
+<img src='images/powershell2.png'>
+
+### Additional Powershell Configuration (you must do this)
+
+You need to perform this step **only once** to be able to use agent forwarding which is explained further in the lab. 
+
+* Exit Powershell if running
+* Start a new Powershell session using **run as Administrator**
+* Enter the following commands, one line at a time (you can cut/paste from here):
+
+```
+Install-Module -Force OpenSSHUtils -Scope AllUsers
+Get-Service -Name ssh-agent | Set-Service -StartupType Manual
+```
+
+* Exit Powershell. You should not need to run as administrator going forward.
+
+
+## Mac and Linux Users
+
+For Mac and Linux users, you will open up the Terminal. Macs and Linux have a built in Terminal. I prefer using [iTerm](https://www.iterm2.com/) app as another Terminal application for your Mac. I’ve been using it for years and I love it. This is not required, but truly recommended. 
+
+In Linux, most distributions will open the terminal by using `Ctrl-Alt-T`.
+
+
+# SSH Keypair Setup
 
 **NOTE: You only need to create your ssh public/private keypair one time only. If you already have a public/private keypair on your laptop let us know.**
 
-* Open a terminal (on your laptop) if not already open (Terminal/iTerm2 in Mac, or Babun in Windows). By default, every time you open a terminal it will open in your home directory.
-* Type `ssh-keygen -t rsa -b 2048`, press enter
-* You will see this prompt, just press enter
+* Open a terminal (on your laptop) if not already open. By default, every time you open a terminal it will open in your home directory.
+* At the command prompt, type `ssh-keygen -t rsa -b 2048`, press enter
+* You will see this prompt, **just press enter**
 
 ```  
 Generating public/private rsa key pair.
 Enter file in which to save the key (/home/User/.ssh/id_rsa):
 ```
 
-* You will see this prompt, just press enter
+* You will see this prompt, **just press enter**
 
 ```
 Created directory '/home/User/.ssh'.
 Enter passphrase (empty for no passphrase):
 ```
 
-* You will see this prompt, just press enter
+* You will see this prompt, **just press enter**
 
 ```
 Enter same passphrase again:
@@ -62,18 +123,30 @@ The key's randomart image is:
 +----[SHA256]-----+
 ``` 
 
-### See the contents of your key files
+## See the contents of your key files
 
-* Open a terminal if not already open (Terminal/iTerm2 in Mac, or Babun in Windows). By default, every time you open a terminal it will open in your home directory.
+* Open a terminal if not already open 
 * Change to your `.ssh` directory. This is a hidden directory so if you list your files using `ls` you won't see it. For seeing all files, use `ls -la`. To change into it type `cd .ssh`.
 * Type `pwd` which prints your current working directory. If you are on a Mac, you should see something like:
  
 ```
 $ pwd
-/Users/marck/.ssh
+/Users/myusername/.ssh
 ```
 
-If you are using Babun or Linux you'll see something like 
+If you are using Powershell you will see something like
+
+```
+PS C:\Users\marck> pwd
+
+Path
+----
+C:\Users\marck
+
+PS C:\Users\marck>
+```
+
+If you are using Linux you'll see something like 
 
 ```
 $ pwd
@@ -100,16 +173,18 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCnKuIRXwZu0JZH0/Q2XNrYYTaJT7bMtXGhGQaSSOZs
 ```
 * Open a text editor (Notepad on Windows or Textpad on Mac, **NOT MICROSOFT WORD**) and select the output of your terminal from the `ssh-rsa` beginning all the way to the end, and paste it in your text editor as-is. We will use this in the next step. You can also just leave it here and copy/paste from your terminal screen.
 
-_For Babun Users Only_
 
-When you created the ssh keypair last week, the permissions of your private key were created incorrectly. This does not happen on Mac/Linux. **This is an important step otherwise your ssh authentication will not work.**
+# AWS Setup
 
-* Type `chmod 400 id_rsa` to change the permissions of the private key
-* Type `ls -la` and you should see that the permissions of your private key file look like `-r--------`.
+You will be using an AWS account created through the AWS Educate Program. To logon to the AWS Console, you must logon to AWS Educate first, go to your AWS Classroom, and then click on AWS Console.
+
+## Select N. Virginia as the Region
+
+The first time you logon to your AWS console, **make sure that the region selected is _N. Virgina_. You can see the region on the top right, next to _Support_. If any other value other than _N. Virginia_ is selected, please select _N. Virgina_. You only need to do this one time.
 
 ## Upload your Public key to AWS
 
-* Log on to your [AWS Console](https://console.aws.amazon.com/) if you are not already logged in
+* Logon to your AWS Console if you are not already logged in
 * Go to the EC2 Dashboard. You can get here by clicking on **Services** in the top left and choosing **EC2** under the **Compute** heading
 * Click on **Key Pairs** on the left hand side of the EC2 console. If you don't see it, scroll down the left side panel until you see the **NETWORK & SECURITY** heading, and you will see the following:
 
@@ -130,32 +205,8 @@ When you created the ssh keypair last week, the permissions of your private key 
 
 You will use your key to connect to AWS resources later.
 
-## Upload your Public key to GitHub
 
-* Create a [GitHub](http://github.com/) account if you do not already have one
-* Log on to your [GitHub](http://github.com/) account if you are not already logged in
-* Click on your profile icon on the top-right of the screen and select **Settings** from the dropdown
-* Click on **SSH and GPG keys** from the left hand menu
-* Click on the **New SSH key** button on the top-right
-* Give your key a name (meaningful to you)
-* Paste the contents of the **public key** in the Key box, and click the **Add SSH Key** button 
-
-### Test that the ssh key works with GitHub
-
-* Open a terminal if not already open (Terminal/iTerm2 in Mac, or Babun in Windows). By default, every time you open a terminal it will open in your home directory.
-* Type `ssh -T git@github.com` and press enter to test. If it works, you will see something like this, with your GitHub username:
-
-```
-The authenticity of host 'github.com (192.30.253.112)' can't be established.
-RSA key fingerprint is SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8.
-Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added 'github.com,192.30.253.112' (RSA) to the list of known hosts.
-Hi wahalulu! You've successfully authenticated, but GitHub does not provide shell access.
-```
-
-* **You are now ready to use ssh authentication with GitHub.**
-
-## Creating a Security Group
+## Create a Security Group
 
 Before we launch our first AWS EC2 instance, we will setup a _Security Group_ in the AWS Console. Each account comes with a default security group, but we will create a specific one that we will use to connect to our EC2 instance via ssh, which means it will open up port 22 on your instance.
 
@@ -191,13 +242,9 @@ This is a step-by-step guide on how to launch an instance.
 
 * _Step 1: Choose an Amazon Machine Image:_ 
 
-	* Click on **AWS Marketplace** on the left hand side panel and type `miniconda` in the search bar
-	* Select the **Miniconda with Python 3** AMI
-	<img src='images/launch-instance-02a.png'>
-	
-	* Review the Miniconda selection and click **continue**
-	<img src='images/launch-instance-02b.png'>
-	
+Click on **Quick Start** on the left hand side and select the first image **Amazon Linux 2 AMI**
+
+<img src='images/launch-instance-02.png'>
 
 
 * _Step 2: Choose an Instance Type:_ Select the **t2.micro** instance type (this one is eligible for the free tier), and click **Next: Configure Instance Details**
@@ -236,7 +283,7 @@ This is a step-by-step guide on how to launch an instance.
 
 * When the instance is in "running" state, it is ready to be used!
 
-## Connecting to the remote server using Secure Shell `ssh
+## Connect to the remote server using Secure Shell `ssh`
 
 We will be using the terminal with Secure Shell to connect to our remote instance. 
 
@@ -282,7 +329,37 @@ https://aws.amazon.com/amazon-linux-2/
 **Congratulations, you have successfully connected to your remote instance!**
 
 
-## Using ssh agent
+# GitHub Setup
+
+## Upload your Public key to GitHub
+
+* Create a [GitHub](http://github.com/) account if you do not already have one
+* Log on to your [GitHub](http://github.com/) account if you are not already logged in
+* Click on your profile icon on the top-right of the screen and select **Settings** from the dropdown
+* Click on **SSH and GPG keys** from the left hand menu
+* Click on the **New SSH key** button on the top-right
+* Give your key a name (meaningful to you)
+* Paste the contents of the **public key** in the Key box, and click the **Add SSH Key** button 
+
+## Test that the ssh key works with GitHub
+
+* Open a terminal if not already open on your laptop 
+* At the command prompt, type `ssh -T git@github.com` and press enter to test. If it works, you will see something like this, with your GitHub username:
+
+```
+The authenticity of host 'github.com (192.30.253.112)' can't be established.
+RSA key fingerprint is SHA256:nThbg6kXUpJWGl7E1IGOCspRomTxdCARLviKw6E5SY8.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'github.com,192.30.253.112' (RSA) to the list of known hosts.
+Hi wahalulu! You've successfully authenticated, but GitHub does not provide shell access.
+```
+
+* **You are now ready to use ssh authentication with GitHub.**
+
+
+# ssh-agent Setup
+
+## Add your private key to memory
 
 One thing to keep in mind is that whenever you want to use your GitHub repository on your cloud resources, you will need to connect to your remote machines and use the SSH agent functionality to pass your ssh private key and store it in the remote server's memory. **You do not need to do this every time you connect to your remote machine; only when you want to clone/push a repository between your remote instance and GitHub.** 
 
@@ -302,16 +379,18 @@ Note: if you have issues with `ssh-add` command on Mac/Linux, you can use the in
 
 __For Windows:__ 
 
-* in your Babun terminal, you need to use two commands: ``eval `ssh-agent -s` ``, and then `ssh-add`.
+* In Powershell, if need to use ssh-agent, you need to start the service manually every Powershell session before you can use ssh-agent. You must run `Start-Service ssh-agent`:
 
 ```
-{ ~ } >> eval `ssh-agent -s`
-Agent pid XXXX
-{ ~ } >> ssh-add
-Identity added: /home/xxxx/.ssh/id_rsa 
+PS C:\Users\marck> Start-Service ssh-agent
+PS C:\Users\marck> ssh-add
+Identity added: C:\Users\marck/.ssh/id_rsa (C:\Users\marck/.ssh/id_rsa)
+PS C:\Users\marck>
 ```
 
-To log-on to the remote server with your ssh-agent, you need to use the `-A` parameter in your ssh command: `ssh -A ec2-user@...` where `...` is your instance's DNS. 
+## Connect to remote machine with ssh-agent forwarding
+
+To connect to the remote server with your ssh-agent, you need to use the `-A` parameter in your ssh command: `ssh -A ec2-user@...` where `...` is your instance's DNS. 
 
 One you connect to your remote machine, you can test that the ssh-agent forwarded your private key. Test the ssh connection to GitHub as we did before: 
 
@@ -323,10 +402,11 @@ One you connect to your remote machine, you can test that the ssh-agent forwarde
 Hi wahalulu! You've successfully authenticated, but GitHub does not provide shell access.
 ```
 
-## Install git in your remote machine
+# Install git on Remote Machine
 
-The AMI image we chose is a bare-bones Linux image with Miniconda. You will need to install git on the remote machine so you can clone/push your repository.
+The virtual machine image we chose is a bare-bones Linux image. You will need to install git on the remote machine so you can clone/push your repository.
 
+* ssh to your remote machine
 * At the remote terminal prompt, type: `sudo yum -y install git`
 
 When git is finished installing, you will see something like this:
@@ -334,15 +414,23 @@ When git is finished installing, you will see something like this:
 <img src='images/git-install.png'>
 
 
-# Working with GitHub Classroom
+# GitHub Classroom Sample Assignment
 
-We will be using [GitHub Classroom](https://classroom.github.com/) for assignments. Working with GitHub classroom is very easy. When an assignment is created, we will share a GitHub link with you. We created a sample assignment, and the link is the following:
+We will be using [GitHub Classroom](https://classroom.github.com/) for assignments. Working with GitHub classroom is very easy. When an assignment is created, we will share a GitHub link with you. The link to the sample assignment will be provided in the lab session. 
 
-[https://classroom.github.com/a/6E8awdR_](https://classroom.github.com/a/6E8awdR_)
+When you click on the assignment link, you will be asked to "accept" the invitation to this assignment. Please accept, and when you do so, GitHub will automatically create a private copy of this repository within your own GitHub account. Course instructors and TA's have access to your repository.
 
-When you click on this link, you will be asked to "accept" the invitation to this assignment. Please accept, and when you do so, GitHub will automatically create a private copy of this repository within your own GitHub account. Course instructors and TA's have access to your repository.
-
-The assignment instructions are contained within the README file of the repository.
+The assignment instructions are contained within the README file of the repository. Please perform the assignemtn as indicated.
 
 
+# Microsoft Azure Student Account Setup
 
+You will setup a student account on [Microsoft Azure](https://azure.microsoft.com/en-us/). This account provides you with a $100 credit that is good for a year. 
+
+1. Open an incognito browser session
+1. Go to [https://azure.microsoft.com/en-us/free/students/](https://azure.microsoft.com/en-us/free/students/)
+2. Click on Activate Now
+3. Enter your school email address (may require further authentication)
+4. Go through the rest of the process
+5. After your account is validated, you will end up logged in to the [Azure Portal](http://portal.azure.com).
+6. To use Azure in the future, logon with your school email. It is recommended that you use an incognito/private browser session.
