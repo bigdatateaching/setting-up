@@ -229,4 +229,4 @@ We are using [GitHub Classroom](https://classroom.github.com/) as the platform f
 	
 	**Each student has their own repository created for every lab/assignment. The repository name usually includes your GitHub account name as part of the name of the repo. Your repository is private and must remain private. Only the intructional team and the individual student have access to each student's repo.**
 
-1. You are not ready to visit your repository and follow the instructions.
+1. You are now ready to visit your repository and follow the instructions.
